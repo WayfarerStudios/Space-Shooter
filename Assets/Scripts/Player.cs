@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    // misc.
     [SerializeField]
     private float _speed = 3.5f;
     private float _speedMultiplier = 2;
@@ -18,17 +19,29 @@ public class Player : MonoBehaviour
     private int _lives = 3;
     private SpawnManager _spawnManager;
 
+    // bools
     private bool _isTripleShotActive = false;
     private bool _isSpeedBoostActive = false;
     private bool _isShieldsActive = false;
 
+    // game objects
     [SerializeField]
     private GameObject _shieldVisualizer;
+    [SerializeField]
+    private GameObject _rightEngine;
+    [SerializeField]
+    private GameObject _leftEngine;
 
     [SerializeField]
     private int _score;
 
     private UIManager _uiManager;
+
+    // audio
+    [SerializeField]
+    private AudioClip _laserAudio;
+    [SerializeField]
+    private AudioSource _audioSource;
     
 
 
@@ -38,6 +51,7 @@ public class Player : MonoBehaviour
         transform.position = new Vector3(0, 0, 0);
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+        _audioSource = GetComponent<AudioSource>();
 
         if (_spawnManager == null)
         {
@@ -47,6 +61,16 @@ public class Player : MonoBehaviour
         if (_uiManager == null)
         {
             Debug.Log("The UI Manager is null");
+        }
+
+        if ( _audioSource == null)
+        {
+            Debug.Log("The Audio Manager on the player is null");
+        }
+
+        else
+        {
+            _audioSource.clip = _laserAudio;
         }
         
     }
@@ -98,6 +122,10 @@ public class Player : MonoBehaviour
             Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
         }
 
+        // Play the laser audio clip
+        _audioSource.Play();
+        
+
     }
 
     public void Damage()
@@ -109,8 +137,18 @@ public class Player : MonoBehaviour
             _shieldVisualizer.SetActive(false);
             return;
         }
+
         _lives--;
 
+        if (_lives == 2)
+        {
+            _leftEngine.SetActive(true);
+        }
+        else if (_lives == 1)
+        {
+            _rightEngine.SetActive(true);
+        }
+       
         _uiManager.UpdateLives(_lives);
 
         if (_lives < 1)
