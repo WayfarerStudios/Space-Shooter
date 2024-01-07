@@ -11,6 +11,8 @@ public class Enemy : MonoBehaviour
 
     [SerializeField]
     private GameObject _laserPrefab;
+    [SerializeField]
+    private GameObject _laserSpawnPoint;
 
     [SerializeField]
     private AudioSource _audioSource;
@@ -45,7 +47,7 @@ public class Enemy : MonoBehaviour
         {
             _fireRate = Random.Range(3f, 7f);
             _canFire = Time.time + _fireRate;
-            GameObject enemyLaser = Instantiate(_laserPrefab, transform.position, Quaternion.identity);
+            GameObject enemyLaser = Instantiate(_laserPrefab, _laserSpawnPoint.transform.position, Quaternion.identity);
             Laser[] lasers = enemyLaser.GetComponentsInChildren<Laser>();
             
             for (int i = 0; i < lasers.Length; i++)
